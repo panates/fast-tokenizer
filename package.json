@@ -1,0 +1,75 @@
+{
+  "name": "fast-tokenizer",
+  "description": "A fast tokenizer/lexer for JavaScript",
+  "version": "0.0.1",
+  "author": "Panates",
+  "license": "MIT",
+  "contributors": [
+    "Eray Hanoglu <e.hanoglu@panates.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/panates/fast-tokenizer.git"
+  },
+  "keywords": [
+    "tokinizer",
+    "lexer",
+    "split",
+    "string"
+  ],
+  "type": "module",
+  "main": "cjs/index.js",
+  "module": "esm/index.mjs",
+  "types": "esm/index.d.ts",
+  "exports": {
+    ".": "./cjs/index.js",
+    "./cjs": "./cjs/index.js",
+    "./esm": "./esm/index.mjs"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.17.0",
+    "@types/jest": "^27.5.1",
+    "@types/node": "^17.0.35",
+    "@typescript-eslint/eslint-plugin": "^5.25.0",
+    "@typescript-eslint/parser": "^5.25.0",
+    "eslint": "^8.16.0",
+    "eslint-config-google": "^0.14.0",
+    "jest": "^28.1.0",
+    "ts-cleanup": "^0.2.4",
+    "ts-jest": "^28.0.2",
+    "ts-loader": "^9.3.0",
+    "ts-node": "^10.7.0",
+    "tsconfig-paths": "^4.0.0",
+    "typescript": "^4.6.4",
+    "typescript-esm": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=16.0",
+    "npm": ">=7.0.0"
+  },
+  "files": [
+    "cjs/",
+    "esm/",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "compile": "tsc -b tsconfig.json",
+    "lint": "eslint --no-error-on-unmatched-pattern",
+    "clean": "npm run clean:src && npm run clean:dist",
+    "clean:dist": "rimraf cjs esm coverage",
+    "clean:src": "ts-cleanup -s src --all | ts-cleanup -s test",
+    "prebuild": "npm run clean:dist && npm run lint",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc -b tsconfig-build-cjs.json",
+    "build:esm": "tsc -b tsconfig-build-esm.json && tsc-esm -p tsconfig-build-esm.json",
+    "postbuild": "cp package.cjs.json ./cjs/package.json",
+    "test": "jest",
+    "cover": "rimraf coverage",
+    "precover": "jest --maxWorkers=1 --coverage",
+    "precitest": "rimraf coverage",
+    "citest": "jest --coverage --coverageReporters=lcov"
+  }
+}
