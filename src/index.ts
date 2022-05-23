@@ -42,35 +42,40 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
   const len = input.length;
   const delimiters = options?.delimiters != null ? options?.delimiters : tokenize.DEFAULT_DELIMITERS;
   const bracketChars = typeof options?.brackets === 'string' ? options.brackets
-    : (options?.brackets === true ? tokenize.DEFAULT_BRACKETS : '');
+      : (options?.brackets === true ? tokenize.DEFAULT_BRACKETS : '');
   if (bracketChars.length % 2 !== 0)
     throw new Error('"brackets" option must contain even number of characters');
   const quoteChars = typeof options?.quotes === 'string' ? options.quotes
-    : (options?.quotes === true ? tokenize.DEFAULT_QUOTES : '');
+      : (options?.quotes === true ? tokenize.DEFAULT_QUOTES : '');
   const keepDelimiters: TokenCallback | undefined =
-    options?.keepDelimiters == null ? undefined :
-      (typeof options?.keepDelimiters === 'function'
-          ? options.keepDelimiters
-          : () => !!options?.keepDelimiters
-      )
+      options?.keepDelimiters == null ? undefined :
+          (typeof options?.keepDelimiters === 'function'
+                  ? options.keepDelimiters
+                  : () => !!options?.keepDelimiters
+          )
   const keepQuotes: TokenCallback | undefined = options?.keepQuotes == null ? undefined :
-    (typeof options?.keepQuotes === 'function'
-        ? options.keepQuotes
-        : () => !!options?.keepQuotes
-    )
+      (typeof options?.keepQuotes === 'function'
+              ? options.keepQuotes
+              : () => !!options?.keepQuotes
+      )
   const keepBrackets: TokenCallback | undefined = options?.keepBrackets == null ? undefined :
-    (typeof options?.keepBrackets === 'function'
-        ? options.keepBrackets
-        : () => !!options?.keepBrackets
-    )
+      (typeof options?.keepBrackets === 'function'
+              ? options.keepBrackets
+              : () => !!options?.keepBrackets
+      )
   const emptyTokens = !!options?.emptyTokens;
-  // noinspection SuspiciousTypeOfGuard
-  const optionsEscape = options?.escape == false ? '' : options?.escape ?? '\\';
-  const escapeFn: TokenCallback = typeof optionsEscape === 'function'
-    ? optionsEscape
-    : (optionsEscape instanceof RegExp
-      ? (c) => optionsEscape.test(c)
-      : (c) => c === optionsEscape);
+  let escapeFn: TokenCallback | undefined
+  if (options?.escape == null) {
+    escapeFn = (c) => c === '\\';
+  } else {
+    const optionsEscape = options.escape;
+    if (typeof optionsEscape === 'function')
+      escapeFn = optionsEscape;
+    else if (optionsEscape instanceof RegExp)
+      escapeFn = (c) => optionsEscape.test(c)
+    else if (typeof optionsEscape === 'string' && optionsEscape)
+      escapeFn = (c) => c === optionsEscape;
+  }
 
   let index = 0;
   let startIndex = 0;
@@ -121,7 +126,7 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
         _next = input.charAt(index);
 
         // Escaping
-        if (escapeFn(c, _prev, _next)) {
+        if (escapeFn && escapeFn(c, _prev, _next)) {
           token += _next;
           index++;
           continue;
@@ -165,8 +170,8 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
         }
 
         if (delimiters && (
-          (typeof delimiters === 'string' && delimiters.includes(c)) ||
-          (delimiters instanceof RegExp && delimiters.test(c))
+            (typeof delimiters === 'string' && delimiters.includes(c)) ||
+            (delimiters instanceof RegExp && delimiters.test(c))
         )) {
           current = token;
           token = keepDelimiters && keepDelimiters(c, _prev, _next) ? c : '';
