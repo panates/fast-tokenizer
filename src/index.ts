@@ -4,7 +4,7 @@ export interface TokenizerOptions {
   delimiters?: string | RegExp;
   brackets?: string | boolean;
   quotes?: string | boolean;
-  escape?: string | RegExp | TokenCallback;
+  escape?: string | RegExp | TokenCallback | false;
   keepDelimiters?: boolean | TokenCallback;
   keepQuotes?: boolean | TokenCallback;
   keepBrackets?: boolean | TokenCallback;
@@ -65,7 +65,7 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
     )
   const emptyTokens = !!options?.emptyTokens;
   // noinspection SuspiciousTypeOfGuard
-  const optionsEscape = options?.escape || '\\';
+  const optionsEscape = options?.escape == false ? '' : options?.escape ?? '\\';
   const escapeFn: TokenCallback = typeof optionsEscape === 'function'
     ? optionsEscape
     : (optionsEscape instanceof RegExp

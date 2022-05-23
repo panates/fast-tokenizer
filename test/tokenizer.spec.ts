@@ -114,6 +114,24 @@ describe('Tokenizer', function () {
       expect(tokenizer.next()).toStrictEqual('mars');
     })
 
+    it('Should not escape if "escape" options set to empty char', () => {
+      const tokenizer = tokenize('Hello\\ world. This is mars', {escape: ''});
+      expect(tokenizer.next()).toStrictEqual('Hello');
+      expect(tokenizer.next()).toStrictEqual('world');
+      expect(tokenizer.next()).toStrictEqual('This');
+      expect(tokenizer.next()).toStrictEqual('is');
+      expect(tokenizer.next()).toStrictEqual('mars');
+    })
+
+    it('Should not escape if "escape" options set to false', () => {
+      const tokenizer = tokenize('Hello\\ world. This is mars', {escape: false});
+      expect(tokenizer.next()).toStrictEqual('Hello');
+      expect(tokenizer.next()).toStrictEqual('world');
+      expect(tokenizer.next()).toStrictEqual('This');
+      expect(tokenizer.next()).toStrictEqual('is');
+      expect(tokenizer.next()).toStrictEqual('mars');
+    })
+
     it('Should escape using RegExp', () => {
       const tokenizer = tokenize('Hello# world. This is mars', {escape: /[#]/});
       expect(tokenizer.next()).toStrictEqual('Hello world');
