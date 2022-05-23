@@ -1,7 +1,7 @@
 {
   "name": "fast-tokenizer",
   "description": "A fast tokenizer/lexer for JavaScript",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": "Panates",
   "license": "MIT",
   "contributors": [
@@ -26,8 +26,7 @@
     "./cjs": "./cjs/index.js",
     "./esm": "./esm/index.mjs"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/eslint-parser": "^7.17.0",
     "@types/jest": "^27.5.1",
