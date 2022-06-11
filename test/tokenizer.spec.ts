@@ -79,7 +79,11 @@ describe('Tokenizer', function () {
     })
 
     it('Should set quote characters', () => {
-      const tokenizer = tokenize('Hello "world." `This is mars`', {delimiters: ' ', quotes: '`', keepQuotes: false});
+      const tokenizer = tokenize('Hello "world." `This is mars`', {
+        delimiters: ' ',
+        quotes: ['`'],
+        keepQuotes: false
+      });
       expect(tokenizer.next()).toStrictEqual('Hello');
       expect(tokenizer.next()).toStrictEqual('"world."');
       expect(tokenizer.next()).toStrictEqual('This is mars');
@@ -89,6 +93,17 @@ describe('Tokenizer', function () {
       const tokenizer = tokenize('Hello (world. [This is] mars)', {brackets: true});
       expect(tokenizer.next()).toStrictEqual('Hello');
       expect(tokenizer.next()).toStrictEqual('(world. [This is] mars)');
+    })
+
+    it('Should se custom brackets ', () => {
+      const tokenizer = tokenize('Hello $(world. $[This is]$ mars)$', {
+        brackets: {
+          '$(': ')$',
+          '$[': ']$'
+        }
+      });
+      expect(tokenizer.next()).toStrictEqual('Hello');
+      expect(tokenizer.next()).toStrictEqual('$(world. $[This is]$ mars)$');
     })
 
     it('Should keep bracket characters if keepBrackets=false', () => {
@@ -152,7 +167,8 @@ describe('Tokenizer', function () {
     it('Should escape using function', () => {
       const tokenizer = tokenize("John''s place", {
         quotes: true,
-        escape: (current, prev, next) => current === "'" && next === "'"
+        escape: (current, index, input) =>
+            current === "'" && input[index + current.length] === "'"
       });
       expect(tokenizer.next()).toStrictEqual('John\'s');
       expect(tokenizer.next()).toStrictEqual('place');
