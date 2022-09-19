@@ -10,17 +10,12 @@ module.exports = {
   ],
   testPathIgnorePatterns: ['/node_modules/'],
   transform: {
-    '^.+\\.(t|j)s$': 'ts-jest'
+    '^.+.ts?$': ['ts-jest', {
+      'tsconfig': '<rootDir>/test/tsconfig.json'
+    }]
   },
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1'
-  },
-  globals: {
-    'ts-jest': {
-      diagnostics: false,
-      tsconfig: '<rootDir>/test/tsconfig.json',
-      useESM: true
-    }
   },
   extensionsToTreatAsEsm: ['.ts'],
   coverageDirectory: "<rootDir>/coverage/",

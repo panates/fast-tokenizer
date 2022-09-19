@@ -95,7 +95,6 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
   let current = '';
   let token = '';
   let c = '';
-  let _prev = '';
   let _next = '';
   let bracketStack: number[] = [];
   let quoteString = '';
@@ -125,7 +124,6 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
       token = '';
       bracketStack = [];
       quoteString = '';
-      _prev = '';
       _next = '';
     },
 
@@ -134,7 +132,6 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
       if (index >= len)
         return null;
       while (index < len) {
-        _prev = c;
         curIndex = index;
         c = input.charAt(index++);
         _next = input.charAt(index);
@@ -156,15 +153,17 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
             index = curIndex + bracketsL[i].length;
             continue;
           }
-          i = bracketsR.findIndex(x => x === input.substring(curIndex, curIndex + x.length));
-          if (i >= 0) {
-            if (i != bracketStack[bracketStack.length - 1])
-              throw new SyntaxError('Closure of brackets was used invalid.');
-            bracketStack.pop();
-            if (keepBrackets == null || keepBrackets(bracketsR[i], curIndex, input))
-              token += bracketsR[i];
-            index = curIndex + bracketsR[i].length;
-            continue;
+          if (bracketStack.length) {
+            i = bracketsR.findIndex(x => x === input.substring(curIndex, curIndex + x.length));
+            if (i >= 0) {
+              if (i !== bracketStack[bracketStack.length - 1])
+                throw new SyntaxError('Closure of brackets was used invalid.');
+              bracketStack.pop();
+              if (keepBrackets == null || keepBrackets(bracketsR[i], curIndex, input))
+                token += bracketsR[i];
+              index = curIndex + bracketsR[i].length;
+              continue;
+            }
           }
         }
 
@@ -175,7 +174,7 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
 
         // Quotes
         if (quotes) {
-          let i = quotes.findIndex(x => x === input.substring(curIndex, curIndex + x.length));
+          const i = quotes.findIndex(x => x === input.substring(curIndex, curIndex + x.length));
           if (i >= 0) {
             const s = quotes[i];
             if (keepQuotes == null || keepQuotes(s, curIndex, input))
@@ -233,7 +232,7 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
     },
 
     [Symbol.iterator]() {
-      const next = this.next;
+      const next = () => this.next();
       if (!iterator) {
         iterator = {
           next() {
