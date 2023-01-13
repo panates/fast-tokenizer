@@ -1,4 +1,4 @@
-import {splitString, tokenize} from '../src';
+import { tokenize } from '../src/index.js';
 
 describe('Tokenizer', function () {
 
@@ -217,19 +217,6 @@ describe('Tokenizer', function () {
     })
 
   })
-
-  describe('splitString', function () {
-
-    it('Should split token parts as string array', () => {
-      const tokens = splitString('Hello/world/This/is/mars');
-      expect(tokens).toStrictEqual(['Hello', 'world', 'This', 'is', 'mars']);
-    })
-
-    it('Should array starts with empty items if string starts with a delimiter', () => {
-      const tokens = splitString('/Hello/world/This/is/mars');
-      expect(tokens).toStrictEqual(['', 'Hello', 'world', 'This', 'is', 'mars']);
-    })
-  });
 
 });
 
