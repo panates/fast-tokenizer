@@ -74,7 +74,6 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
     }
   }
 
-
   const emptyTokens = !!options?.emptyTokens;
   let escapeFn: TokenCallback | undefined
   if (options?.escape == null) {
@@ -129,8 +128,6 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
 
     next() {
       startIndex = index;
-      if (index >= len)
-        return null;
       while (index < len) {
         curIndex = index;
         c = input.charAt(index++);
@@ -211,7 +208,7 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
 
       current = token;
       token = '';
-      return current;
+      return current || null;
     },
 
     all(): string[] {

@@ -1,23 +1,17 @@
 module.exports = {
-  moduleFileExtensions: ['js', 'json', 'ts'],
-  rootDir: '.',
   testEnvironment: 'node',
-  verbose: true,
-  forceExit: true,
-  detectOpenHandles: true,
+  maxWorkers: '50%',
   testMatch: [
     '<rootDir>/test/**/*.spec.ts'
   ],
-  testPathIgnorePatterns: ['/node_modules/'],
   transform: {
-    '^.+.ts?$': ['ts-jest', {
+    '^.+\\.tsx?$': ['ts-jest', {
       'tsconfig': '<rootDir>/test/tsconfig.json'
     }]
   },
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1'
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
-  extensionsToTreatAsEsm: ['.ts'],
   coverageDirectory: "<rootDir>/coverage/",
 };
 
