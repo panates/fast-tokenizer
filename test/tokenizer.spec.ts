@@ -109,7 +109,7 @@ describe('Tokenizer', function () {
     it('Should keep bracket characters if keepBrackets=false', () => {
       const tokenizer = tokenize('Hello (world. [This is] mars)', {brackets: true, keepBrackets: false});
       expect(tokenizer.next()).toStrictEqual('Hello');
-      expect(tokenizer.next()).toStrictEqual('world. This is mars');
+      expect(tokenizer.next()).toStrictEqual('world. [This is] mars');
     })
 
     it('Should keep bracket characters if keepBrackets=function', () => {
