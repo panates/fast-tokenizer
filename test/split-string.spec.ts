@@ -18,8 +18,15 @@ describe('splitString', function () {
   })
 
   it('Should keep text in quotes', () => {
-    const v = splitString("a,'a,b'", {brackets: true, quotes: true, keepQuotes: false});
+    const v = splitString("a,'a,b'", {quotes: true, keepQuotes: false});
     expect(v).toStrictEqual(["a", "a,b"]);
+  })
+
+  it('Should keep text in brackets', () => {
+    const v = splitString("a,(b,c,(d,e))", {
+      brackets: true, keepBrackets: false
+    });
+    expect(v).toStrictEqual(["a", "b,c,(d,e)"]);
   })
 
 });

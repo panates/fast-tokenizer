@@ -145,7 +145,7 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
           let i = bracketsL.findIndex(x => x === input.substring(curIndex, curIndex + x.length));
           if (i >= 0) {
             bracketStack.push(i);
-            if (keepBrackets == null || keepBrackets(bracketsL[i], curIndex, input))
+            if (bracketStack.length > 1 || keepBrackets == null || keepBrackets(bracketsL[i], curIndex, input))
               token += bracketsL[i];
             index = curIndex + bracketsL[i].length;
             continue;
@@ -156,7 +156,7 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
               if (i !== bracketStack[bracketStack.length - 1])
                 throw new SyntaxError('Closure of brackets was used invalid.');
               bracketStack.pop();
-              if (keepBrackets == null || keepBrackets(bracketsR[i], curIndex, input))
+              if (bracketStack.length || keepBrackets == null || keepBrackets(bracketsR[i], curIndex, input))
                 token += bracketsR[i];
               index = curIndex + bracketsR[i].length;
               continue;
