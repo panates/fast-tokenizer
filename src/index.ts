@@ -1,4 +1,8 @@
-export type TokenCallback = ((current: string, index: number, input: string) => boolean);
+export type TokenCallback = (
+  current: string,
+  index: number,
+  input: string,
+) => boolean;
 
 export interface TokenizerOptions {
   delimiters?: string | RegExp;
@@ -28,9 +32,16 @@ export interface Tokenizer {
   [Symbol.iterator](): IterableIterator<string>;
 }
 
-export function splitString(input: string, options?: Omit<TokenizerOptions, 'emptyTokens'>): string[] {
+export function splitString(
+  input: string,
+  options?: Omit<TokenizerOptions, 'emptyTokens'>,
+): string[] {
   const out: string[] = [];
-  const tokenizer = tokenize(input, {delimiters: ',', ...options, emptyTokens: true});
+  const tokenizer = tokenize(input, {
+    delimiters: ',',
+    ...options,
+    emptyTokens: true,
+  });
   for (const x of tokenizer) {
     out.push(x || '');
   }
@@ -41,30 +52,41 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
   input = input ? '' + input : '';
   const len = input.length;
   const keepDelimiters: TokenCallback | undefined =
-      options?.keepDelimiters == null ? undefined :
-          (typeof options?.keepDelimiters === 'function'
-                  ? options.keepDelimiters
-                  : () => !!options?.keepDelimiters
-          )
-  const keepQuotes: TokenCallback | undefined = options?.keepQuotes == null ? undefined :
-      (typeof options?.keepQuotes === 'function'
-              ? options.keepQuotes
-              : () => !!options?.keepQuotes
-      )
-  const keepBrackets: TokenCallback | undefined = options?.keepBrackets == null ? undefined :
-      (typeof options?.keepBrackets === 'function'
-              ? options.keepBrackets
-              : () => !!options?.keepBrackets
-      )
-
-  const delimiters = options?.delimiters != null ? options?.delimiters : tokenize.DEFAULT_DELIMITERS;
-  const quotes = options?.quotes == null || options?.quotes === false
+    options?.keepDelimiters == null
       ? undefined
-      : Array.isArray(options.quotes) ? options.quotes : tokenize.DEFAULT_QUOTES;
-
-  const brackets = options?.brackets == null || options?.brackets === false
+      : typeof options?.keepDelimiters === 'function'
+        ? options.keepDelimiters
+        : () => !!options?.keepDelimiters;
+  const keepQuotes: TokenCallback | undefined =
+    options?.keepQuotes == null
       ? undefined
-      : typeof options?.brackets === 'object' ? options.brackets : tokenize.DEFAULT_BRACKETS;
+      : typeof options?.keepQuotes === 'function'
+        ? options.keepQuotes
+        : () => !!options?.keepQuotes;
+  const keepBrackets: TokenCallback | undefined =
+    options?.keepBrackets == null
+      ? undefined
+      : typeof options?.keepBrackets === 'function'
+        ? options.keepBrackets
+        : () => !!options?.keepBrackets;
+
+  const delimiters =
+    options?.delimiters != null
+      ? options?.delimiters
+      : tokenize.DEFAULT_DELIMITERS;
+  const quotes =
+    options?.quotes == null || options?.quotes === false
+      ? undefined
+      : Array.isArray(options.quotes)
+        ? options.quotes
+        : tokenize.DEFAULT_QUOTES;
+
+  const brackets =
+    options?.brackets == null || options?.brackets === false
+      ? undefined
+      : typeof options?.brackets === 'object'
+        ? options.brackets
+        : tokenize.DEFAULT_BRACKETS;
   const bracketsL: string[] = [];
   const bracketsR: string[] = [];
   if (brackets) {
@@ -75,17 +97,17 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
   }
 
   const emptyTokens = !!options?.emptyTokens;
-  let escapeFn: TokenCallback | undefined
+  let escapeFn: TokenCallback | undefined;
   if (options?.escape == null) {
-    escapeFn = (c) => c === '\\';
+    escapeFn = c => c === '\\';
   } else {
     const optionsEscape = options.escape;
-    if (typeof optionsEscape === 'function')
-      escapeFn = optionsEscape;
-    else if (optionsEscape instanceof RegExp)
-      escapeFn = (c) => optionsEscape.test(c)
-    else if (typeof optionsEscape === 'string' && optionsEscape)
-      escapeFn = (c) => c === optionsEscape;
+    if (typeof optionsEscape === 'function') escapeFn = optionsEscape;
+    else if (optionsEscape instanceof RegExp) {
+      escapeFn = c => optionsEscape.test(c);
+    } else if (typeof optionsEscape === 'string' && optionsEscape) {
+      escapeFn = c => c === optionsEscape;
+    }
   }
 
   let index = 0;
@@ -142,22 +164,37 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
 
         // Brackets
         if (brackets) {
-          let i = bracketsL.findIndex(x => x === input.substring(curIndex, curIndex + x.length));
+          let i = bracketsL.findIndex(
+            x => x === input.substring(curIndex, curIndex + x.length),
+          );
           if (i >= 0) {
             bracketStack.push(i);
-            if (bracketStack.length > 1 || keepBrackets == null || keepBrackets(bracketsL[i], curIndex, input))
+            if (
+              bracketStack.length > 1 ||
+              keepBrackets == null ||
+              keepBrackets(bracketsL[i], curIndex, input)
+            ) {
               token += bracketsL[i];
+            }
             index = curIndex + bracketsL[i].length;
             continue;
           }
           if (bracketStack.length) {
-            i = bracketsR.findIndex(x => x === input.substring(curIndex, curIndex + x.length));
+            i = bracketsR.findIndex(
+              x => x === input.substring(curIndex, curIndex + x.length),
+            );
             if (i >= 0) {
-              if (i !== bracketStack[bracketStack.length - 1])
+              if (i !== bracketStack[bracketStack.length - 1]) {
                 throw new SyntaxError('Closure of brackets was used invalid.');
+              }
               bracketStack.pop();
-              if (bracketStack.length || keepBrackets == null || keepBrackets(bracketsR[i], curIndex, input))
+              if (
+                bracketStack.length ||
+                keepBrackets == null ||
+                keepBrackets(bracketsR[i], curIndex, input)
+              ) {
                 token += bracketsR[i];
+              }
               index = curIndex + bracketsR[i].length;
               continue;
             }
@@ -171,13 +208,15 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
 
         // Quotes
         if (quotes) {
-          const i = quotes.findIndex(x => x === input.substring(curIndex, curIndex + x.length));
+          const i = quotes.findIndex(
+            x => x === input.substring(curIndex, curIndex + x.length),
+          );
           if (i >= 0) {
             const s = quotes[i];
-            if (keepQuotes == null || keepQuotes(s, curIndex, input))
+            if (keepQuotes == null || keepQuotes(s, curIndex, input)) {
               token += s;
-            if (quoteString)
-              quoteString = '';
+            }
+            if (quoteString) quoteString = '';
             else quoteString = s;
             index = curIndex + s.length;
             continue;
@@ -189,22 +228,23 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
           continue;
         }
 
-        if (delimiters && (
-            (typeof delimiters === 'string' && delimiters.includes(c)) ||
-            (delimiters instanceof RegExp && delimiters.test(c))
-        )) {
+        if (
+          delimiters &&
+          ((typeof delimiters === 'string' && delimiters.includes(c)) ||
+            (delimiters instanceof RegExp && delimiters.test(c)))
+        ) {
           current = token;
           token = keepDelimiters && keepDelimiters(c, curIndex, input) ? c : '';
-          if (current || emptyTokens)
-            return current;
+          if (current || emptyTokens) return current;
           continue;
         }
 
         token += c;
       }
 
-      if (bracketStack.length)
+      if (bracketStack.length) {
         throw new SyntaxError(`Bracket (${bracketStack.pop()}) is not closed`);
+      }
 
       current = token;
       token = '';
@@ -236,21 +276,21 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
             const value = next();
             return {
               done: value == null,
-              value: value || ''
-            }
+              value: value || '',
+            };
           },
           [Symbol.iterator]() {
             return this;
-          }
-        }
+          },
+        };
       }
       return iterator;
-    }
+    },
   };
 }
 
 export namespace tokenize {
-  export const DEFAULT_BRACKETS = {'[': ']', '(': ')'};
-  export const DEFAULT_QUOTES = ['"', '\'', '`'];
-  export const DEFAULT_DELIMITERS = /\W/
+  export const DEFAULT_BRACKETS = { '[': ']', '(': ')' };
+  export const DEFAULT_QUOTES = ['"', "'", '`'];
+  export const DEFAULT_DELIMITERS = /\W/;
 }
