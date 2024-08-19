@@ -29,7 +29,7 @@ fast-tokenizer is available under [MIT](LICENSE) license.
 [npm-url]: https://npmjs.org/package/fast-tokenizer
 [circleci-image]: https://circleci.com/gh/panates/fast-tokenizer/tree/master.svg?style=shield
 [circleci-url]: https://circleci.com/gh/panates/fast-tokenizer/tree/master
-[coveralls-image]: https://img.shields.io/coveralls/panates/fast-tokenizer/master.svg
+[coveralls-image]: https://img.shields.io/coveralls/panates/fast-tokenizer/main.svg
 [coveralls-url]: https://coveralls.io/r/panates/fast-tokenizer
 [downloads-image]: https://img.shields.io/npm/dm/fast-tokenizer.svg
 [downloads-url]: https://npmjs.org/package/fast-tokenizer
