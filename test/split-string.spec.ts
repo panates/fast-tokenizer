@@ -1,3 +1,4 @@
+import expect from 'expect';
 import { splitString } from '../src/index.js';
 
 describe('splitString', () => {

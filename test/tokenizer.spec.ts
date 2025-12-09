@@ -1,3 +1,4 @@
+import expect from 'expect';
 import { tokenize } from '../src/index.js';
 
 describe('Tokenizer', () => {
