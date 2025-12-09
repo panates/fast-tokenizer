@@ -1,7 +1,7 @@
 {
   "name": "fast-tokenizer",
   "description": "A fast tokenizer/lexer for JavaScript",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "author": "Panates",
   "license": "MIT",
   "dependencies": {
