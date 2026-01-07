@@ -1,23 +1,30 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-function clearPackageJson() {
-  const targetPath = path.resolve(__dirname, '../build');
-
+function postBuild() {
+  const projectRoot = process.cwd();
   const json = JSON.parse(
-    fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf-8'),
+    fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf-8'),
   );
+
+  const buildDir = path.join(projectRoot, 'build');
+  if (!fs.existsSync(buildDir)) throw new Error('Build directory not found');
+
+  json.type = 'module';
   delete json.private;
   delete json.scripts;
   delete json.devDependencies;
+
   fs.writeFileSync(
-    path.resolve(targetPath, 'package.json'),
+    path.resolve(buildDir, 'package.json'),
     JSON.stringify(json, undefined, 2),
+    'utf-8',
   );
   fs.copyFileSync(
-    path.resolve(targetPath, './types/index.d.ts'),
-    path.resolve(targetPath, './types/index.d.cts'),
+    path.resolve('./README.md'),
+    path.resolve(buildDir, 'README.md'),
   );
+  fs.copyFileSync(path.resolve('./LICENSE'), path.resolve(buildDir, 'LICENSE'));
 }
 
-clearPackageJson();
+postBuild();
