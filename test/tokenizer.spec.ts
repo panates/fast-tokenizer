@@ -242,5 +242,18 @@ describe('Tokenizer', () => {
       expect(tokenizer.next()).toStrictEqual('Hello');
       expect(tokenizer.next()).toStrictEqual('world');
     });
+
+    it('Should tokenize json', () => {
+      const tokenizer = tokenize('{ a:1, b: { c: "{a:1}" }}', {
+        brackets: {
+          '{': '}',
+        },
+        quotes: ['"'],
+        keepBrackets: true,
+        keepQuotes: true,
+        escape: '\\',
+      });
+      expect(tokenizer.next()).toStrictEqual('{ a:1, b: { c: "{a:1}" }}');
+    });
   });
 });
