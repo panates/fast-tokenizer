@@ -27,7 +27,7 @@ concurrency:
 
 jobs:
   test:
-    name: Node v${{ matrix.node }} on PostgreSQL v${{ matrix.postgres }}
+    name: Node v${{ matrix.node }}
     if: >
       github.event_name == 'workflow_dispatch' ||
       (
@@ -48,7 +48,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Environment
         uses: panates/gh-setup-node@v1
@@ -73,6 +73,6 @@ jobs:
       - name: Send coverage to Coveralls
         uses: coverallsapp/github-action@v2
         # Run only once
-        if: ${{ matrix.node == '22'}}
+        if: ${{ matrix.node == '24'}}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
