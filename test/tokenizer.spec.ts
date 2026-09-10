@@ -256,4 +256,30 @@ describe('Tokenizer', () => {
       expect(tokenizer.next()).toStrictEqual('{ a:1, b: { c: "{a:1}" }}');
     });
   });
+
+  describe('Known issues', () => {
+    it('Should not treat bracket characters inside a quoted string as structural brackets', () => {
+      const tokenizer = tokenize('"a(b" rest', {
+        quotes: true,
+        brackets: true,
+      });
+      expect(tokenizer.all()).toStrictEqual(['"a(b"', 'rest']);
+    });
+
+    it('Should only close a quote with the matching quote character', () => {
+      const tokenizer = tokenize(`"it's a test" done`, {
+        quotes: true,
+        keepQuotes: false,
+      });
+      expect(tokenizer.all()).toStrictEqual(["it's a test", 'done']);
+    });
+
+    it('Should not be affected by global/sticky flags on a RegExp delimiter', () => {
+      const tokenizer = tokenize('a11b22c', {
+        delimiters: /\d/g,
+        emptyTokens: true,
+      });
+      expect(tokenizer.all()).toStrictEqual(['a', '', 'b', '', 'c']);
+    });
+  });
 });

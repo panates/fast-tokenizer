@@ -1,5 +1,5 @@
 import { tokenize } from './tokenize.js';
-import { TokenizerOptions } from './types.js';
+import type { TokenizerOptions } from './types.js';
 
 export function splitString(
   input: string,

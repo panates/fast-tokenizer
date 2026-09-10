@@ -6,20 +6,61 @@
 [![Test Coverage][coveralls-image]][coveralls-url]
 
 
-A fast tokenizer/lexer for JavaScript
+A fast, dependency-free tokenizer/lexer for JavaScript and TypeScript. Splits a string into
+tokens using configurable delimiters, with optional support for quoted strings, nested
+brackets, and character escaping.
+
+## 📖 [Full API documentation](docs/api.md)
+
+## Features
+
+- Custom delimiters as a string of characters or a `RegExp`
+- Quote-aware tokenization (`"`, `'`, `` ` ``, or custom quote strings) — delimiters and
+  brackets inside a quoted string are treated as literal text
+- Bracket-aware tokenization with nesting support, including custom multi-character brackets
+- Configurable character escaping (default: `\`)
+- Fine-grained control over whether delimiters, quotes, and brackets are kept in the output
+- Lazy, iterable `Tokenizer` cursor — implements `Symbol.iterator`, plus `.all()` and `.join()`
+  convenience methods
+- Zero runtime dependencies, ESM-only
 
 ## Installation
 
 ```bash
-$ npm install fast-tokenizer --save
+npm install fast-tokenizer --save
+```
+
+Requires Node.js >= 20.
+
+## Quick start
+
+```ts
+import { tokenize, splitString } from 'fast-tokenizer';
+
+// Iterate tokens lazily
+for (const token of tokenize('Hello world. This is mars')) {
+  console.log(token); // Hello, world, This, is, mars
+}
+
+// Split a whole string into an array in one call
+splitString('a,b,,c');
+// → ['a', 'b', '', 'c']
+
+// Quoted fields are kept together, even if they contain the delimiter
+splitString('a,"b,c",d', { quotes: ['"'], keepQuotes: false });
+// → ['a', 'b,c', 'd']
+
+// Bracketed content is kept together, including nested brackets
+splitString('a,(b,c,(d,e))', { brackets: true, keepBrackets: false });
+// → ['a', 'b,c,(d,e)']
 ```
 
 ## Support
-You can report bugs and discuss features on the [GitHub issues](https://github.com/panates/fast-tokenizer/issues) page
-When you open an issue please provide version of NodeJS and PostgreSQL server.
+You can report bugs and discuss features on the [GitHub issues](https://github.com/panates/fast-tokenizer/issues) page.
+When you open an issue please provide the version of Node.js and of fast-tokenizer you are using.
 
 ## Node Compatibility
-- node >= 14.x
+- node >= 20.0
  
   
 ### License
