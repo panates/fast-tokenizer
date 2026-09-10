@@ -1,6 +1,9 @@
 node_modules
 /build
 /examples/*/package-lock.json
+*.tsbuildinfo
+graphify-out
+.claude
 
 # environment variables
 .env
