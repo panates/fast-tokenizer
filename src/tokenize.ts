@@ -1,4 +1,4 @@
-import { TokenCallback, Tokenizer, TokenizerOptions } from './types.js';
+import type { TokenCallback, Tokenizer, TokenizerOptions } from './types.js';
 
 export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
   input = input ? '' + input : '';
@@ -22,10 +22,19 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
         ? options.keepBrackets
         : () => !!options?.keepBrackets;
 
-  const delimiters =
+  let delimiters =
     options?.delimiters != null
       ? options?.delimiters
       : tokenize.DEFAULT_DELIMITERS;
+  if (
+    delimiters instanceof RegExp &&
+    (delimiters.global || delimiters.sticky)
+  ) {
+    delimiters = new RegExp(
+      delimiters.source,
+      delimiters.flags.replace(/[gy]/g, ''),
+    );
+  }
   const quotes =
     options?.quotes == null || options?.quotes === false
       ? undefined
@@ -115,7 +124,7 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
         }
 
         // Brackets
-        if (brackets) {
+        if (brackets && !quoteString) {
           let i = bracketsL.findIndex(
             x => x === input.substring(curIndex, curIndex + x.length),
           );
@@ -163,7 +172,7 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
           const i = quotes.findIndex(
             x => x === input.substring(curIndex, curIndex + x.length),
           );
-          if (i >= 0) {
+          if (i >= 0 && (!quoteString || quotes[i] === quoteString)) {
             const s = quotes[i];
             if (keepQuotes == null || keepQuotes(s, curIndex, input)) {
               token += s;
