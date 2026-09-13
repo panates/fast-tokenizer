@@ -1,5 +1,27 @@
 import type { TokenCallback, Tokenizer, TokenizerOptions } from './types.js';
 
+/**
+ * Creates a lazy {@link Tokenizer} cursor over `input`. No scanning happens
+ * until you call {@link Tokenizer.next}, iterate the tokenizer (`for...of`),
+ * or call {@link Tokenizer.all} / {@link Tokenizer.join}.
+ *
+ * For each character, precedence (highest to lowest) is: escape > a quote
+ * character that closes an already-open quote > brackets (only outside a
+ * quote) > a quote character that opens a new quote > delimiters > plain
+ * content. See {@link TokenizerOptions} for what each option controls.
+ *
+ * @param input - The string to tokenize. A falsy value (`undefined`, `null`,
+ *   `''`) is treated as `''`; non-string values are coerced with `'' + input`.
+ * @param options - See {@link TokenizerOptions}.
+ * @returns A {@link Tokenizer} cursor over `input`.
+ *
+ * @example
+ * ```ts
+ * for (const token of tokenize('Hello world. This is mars')) {
+ *   console.log(token); // Hello, world, This, is, mars
+ * }
+ * ```
+ */
 export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
   input = input ? '' + input : '';
   const len = input.length;
@@ -282,7 +304,10 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
 }
 
 export namespace tokenize {
+  /** Default `brackets` pairs used when `brackets: true` is passed. */
   export const DEFAULT_BRACKETS = { '[': ']', '(': ')' };
+  /** Default `quotes` characters used when `quotes: true` is passed. */
   export const DEFAULT_QUOTES = ['"', "'", '`'];
+  /** Default `delimiters`: any non-word character. */
   export const DEFAULT_DELIMITERS = /\W/;
 }
