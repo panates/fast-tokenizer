@@ -30,7 +30,7 @@ brackets, and character escaping.
 npm install fast-tokenizer --save
 ```
 
-Requires Node.js >= 20.
+Requires Node.js >= 22.
 
 ## Quick start
 
@@ -60,7 +60,7 @@ You can report bugs and discuss features on the [GitHub issues](https://github.c
 When you open an issue please provide the version of Node.js and of fast-tokenizer you are using.
 
 ## Node Compatibility
-- node >= 20.0
+- node >= 22.0
  
   
 ### License
