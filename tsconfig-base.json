@@ -2,8 +2,7 @@
   "extends": "@panates/tsconfig/node.json",
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ES2022",
-    "moduleResolution": "nodenext",
-    "types": ["node"]
+    "types": ["node"],
+    "sourceMap": true
   }
 }
