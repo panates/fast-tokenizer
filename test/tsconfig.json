@@ -3,15 +3,8 @@
   "include": ["**/*.ts"],
   "compilerOptions": {
     "types": ["node", "mocha"],
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "strictNullChecks": false,
-    "strict": false,
-    "noEmit": true,
-    "sourceMap": true,
-    "baseUrl": ".",
     "paths": {
-      "fast-tokenizer": ["../src"]
+      "fast-tokenizer": ["../src/index.js"]
     }
   }
 }
