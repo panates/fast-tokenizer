@@ -28,7 +28,7 @@ nesting, and character escaping.
 npm install fast-tokenizer --save
 ```
 
-The package is ESM-only (`"type": "module"`) and requires Node.js >= 20.
+The package is ESM-only (`"type": "module"`) and requires Node.js >= 22.
 
 ```ts
 import { tokenize, splitString } from 'fast-tokenizer';

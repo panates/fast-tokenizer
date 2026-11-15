@@ -114,6 +114,10 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
   let _next = '';
   let bracketStack: number[] = [];
   let quoteString = '';
+  // Set when (with `emptyTokens`) a delimiter is the last character of the
+  // input: the empty token after it is still owed to the caller, but the
+  // scan loop won't run again to produce it.
+  let trailingEmpty = false;
   let iterator: IterableIterator<string> | undefined;
 
   const flush = (end: number) => {
@@ -147,6 +151,7 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
       bracketStack = [];
       quoteString = '';
       _next = '';
+      trailingEmpty = false;
     },
 
     next() {
@@ -250,6 +255,7 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
           current = token;
           segStart = index;
           token = keepDelimiters && keepDelimiters(c, curIndex, input) ? c : '';
+          trailingEmpty = emptyTokens && index >= len && !token;
           if (current || emptyTokens) return current;
           continue;
         }
@@ -263,6 +269,10 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
 
       current = token;
       token = '';
+      if (trailingEmpty) {
+        trailingEmpty = false;
+        return current;
+      }
       return current || null;
     },
 

@@ -19,6 +19,15 @@ describe('splitString', () => {
     expect(tokens).toStrictEqual(['', 'Hello', 'world', 'This', 'is', 'mars']);
   });
 
+  it('Should array ends with empty items if string ends with a delimiter', () => {
+    expect(splitString('a,')).toStrictEqual(['a', '']);
+    expect(splitString('a,b,')).toStrictEqual(['a', 'b', '']);
+    expect(splitString('a,,')).toStrictEqual(['a', '', '']);
+    expect(splitString(',')).toStrictEqual(['', '']);
+    expect(splitString(',,')).toStrictEqual(['', '', '']);
+    expect(splitString('')).toStrictEqual([]);
+  });
+
   it('Should keep text in quotes', () => {
     const v = splitString("a,'a,b'", { quotes: true, keepQuotes: false });
     expect(v).toStrictEqual(['a', 'a,b']);
