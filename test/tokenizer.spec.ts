@@ -26,6 +26,30 @@ describe('Tokenizer', () => {
       expect(tokenizer.next()).toStrictEqual('mars');
     });
 
+    it('Should return a trailing empty token if emptyTokens=true', () => {
+      const tokenizer = tokenize('a,', { delimiters: ',', emptyTokens: true });
+      expect(tokenizer.next()).toStrictEqual('a');
+      expect(tokenizer.next()).toStrictEqual('');
+      expect(tokenizer.next()).toStrictEqual(null);
+      expect(tokenizer.next()).toStrictEqual(null);
+      tokenizer.reset();
+      expect(tokenizer.all()).toStrictEqual(['a', '']);
+    });
+
+    it('Should not return a trailing empty token if emptyTokens=false', () => {
+      const tokenizer = tokenize('a,', { delimiters: ',' });
+      expect(tokenizer.all()).toStrictEqual(['a']);
+    });
+
+    it('Should not add an empty token after a kept trailing delimiter', () => {
+      const tokenizer = tokenize('a,', {
+        delimiters: ',',
+        emptyTokens: true,
+        keepDelimiters: true,
+      });
+      expect(tokenizer.all()).toStrictEqual(['a', ',']);
+    });
+
     it('Should iterate tokens and delimiters if keepDelimiters=true', () => {
       const tokenizer = tokenize('/Hello world. This is mars', {
         keepDelimiters: true,
