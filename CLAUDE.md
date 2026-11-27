@@ -23,3 +23,7 @@ Rules:
   doc section(s) - don't regenerate everything unless the diff is broad enough to warrant it.
 - After updating, bump `git-commit`/`package-version`/`date` in the baseline block to the new
   `HEAD` (only once the docs are verified accurate as of that commit).
+
+## Handoff notes
+
+A handoff note between sessions goes to `.claude/local/handoff.md` (git-ignored); a new session reads it first.

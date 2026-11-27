@@ -70,7 +70,7 @@ fast-tokenizer is available under [MIT](LICENSE) license.
 [npm-url]: https://npmjs.org/package/fast-tokenizer
 [ci-test-image]: https://github.com/panates/fast-tokenizer/actions/workflows/test.yml/badge.svg
 [ci-test-url]: https://github.com/panates/fast-tokenizer/actions/workflows/test.yml
-[coveralls-image]: https://img.shields.io/coveralls/panates/fast-tokenizer/dev.svg
+[coveralls-image]: https://img.shields.io/coveralls/panates/fast-tokenizer/main.svg
 [coveralls-url]: https://coveralls.io/r/panates/fast-tokenizer
 [downloads-image]: https://img.shields.io/npm/dm/fast-tokenizer.svg
 [downloads-url]: https://npmjs.org/package/fast-tokenizer
