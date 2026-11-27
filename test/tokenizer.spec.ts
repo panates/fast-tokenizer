@@ -166,11 +166,22 @@ describe('Tokenizer', () => {
     it('Should throw if the input ends with an unclosed bracket', () => {
       const tokenizer = tokenize('a (b c', { brackets: true });
       expect(tokenizer.next()).toStrictEqual('a');
-      // The message names the pair's position in `brackets`: '(' is the
-      // second pair of tokenize.DEFAULT_BRACKETS.
       expect(() => tokenizer.next()).toThrow(
-        new SyntaxError('Bracket (1) is not closed'),
+        new SyntaxError('Bracket "(" is not closed'),
       );
+    });
+
+    it('Should name the innermost unclosed bracket, multi-character ones too', () => {
+      const tokenizer = tokenize('a $(b [c', {
+        brackets: { '$(': ')$', '[': ']' },
+      });
+      expect(tokenizer.next()).toStrictEqual('a');
+      expect(() => tokenizer.next()).toThrow(
+        new SyntaxError('Bracket "[" is not closed'),
+      );
+      expect(() =>
+        tokenize('$(b', { brackets: { '$(': ')$' } }).next(),
+      ).toThrow(new SyntaxError('Bracket "$(" is not closed'));
     });
 
     it('Should keep bracket characters if keepBrackets=false', () => {
