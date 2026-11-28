@@ -144,8 +144,8 @@ namespace tokenize {
   most recently opened bracket (e.g. `(a]` with default brackets):
   `SyntaxError: Closure of brackets was used invalid.`
 - **Unclosed bracket at end of input** — the input ends while one or more brackets are still
-  open (e.g. `(a`):
-  `` SyntaxError: Bracket (<index>) is not closed ``
+  open (e.g. `(a`). The message names the innermost bracket still open:
+  `SyntaxError: Bracket "(" is not closed`
 
 Unbalanced or mismatched quote characters do **not** throw; an unterminated quoted string
 simply consumes the rest of the input as its content.

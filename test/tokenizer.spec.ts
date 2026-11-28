@@ -128,6 +128,14 @@ describe('Tokenizer', () => {
       expect(tokenizer.next()).toStrictEqual('This is mars');
     });
 
+    it('Should set multi-character quote strings', () => {
+      const tokenizer = tokenize("a '''b c''' d", {
+        delimiters: ' ',
+        quotes: ["'''"],
+      });
+      expect(tokenizer.all()).toStrictEqual(['a', "'''b c'''", 'd']);
+    });
+
     it('Should return all chars in brackets as token', () => {
       const tokenizer = tokenize('Hello (world. [This is] mars)', {
         brackets: true,
@@ -145,6 +153,35 @@ describe('Tokenizer', () => {
       });
       expect(tokenizer.next()).toStrictEqual('Hello');
       expect(tokenizer.next()).toStrictEqual('$(world. $[This is]$ mars)$');
+    });
+
+    it('Should throw if a closing bracket does not match the open one', () => {
+      const tokenizer = tokenize('a (b] c', { brackets: true });
+      expect(tokenizer.next()).toStrictEqual('a');
+      expect(() => tokenizer.next()).toThrow(
+        new SyntaxError('Closure of brackets was used invalid.'),
+      );
+    });
+
+    it('Should throw if the input ends with an unclosed bracket', () => {
+      const tokenizer = tokenize('a (b c', { brackets: true });
+      expect(tokenizer.next()).toStrictEqual('a');
+      expect(() => tokenizer.next()).toThrow(
+        new SyntaxError('Bracket "(" is not closed'),
+      );
+    });
+
+    it('Should name the innermost unclosed bracket, multi-character ones too', () => {
+      const tokenizer = tokenize('a $(b [c', {
+        brackets: { '$(': ')$', '[': ']' },
+      });
+      expect(tokenizer.next()).toStrictEqual('a');
+      expect(() => tokenizer.next()).toThrow(
+        new SyntaxError('Bracket "[" is not closed'),
+      );
+      expect(() =>
+        tokenize('$(b', { brackets: { '$(': ')$' } }).next(),
+      ).toThrow(new SyntaxError('Bracket "$(" is not closed'));
     });
 
     it('Should keep bracket characters if keepBrackets=false', () => {
@@ -231,6 +268,26 @@ describe('Tokenizer', () => {
       for (const s of tokenizer) {
         expect(s).toStrictEqual(arr.shift());
       }
+    });
+
+    it('Should return the same iterator from the iterator itself', () => {
+      const tokenizer = tokenize('Hello world');
+      const iterator = tokenizer[Symbol.iterator]();
+      expect(iterator[Symbol.iterator]()).toBe(iterator);
+      expect([...iterator]).toStrictEqual(['Hello', 'world']);
+    });
+
+    it('Should join all tokens into a string', () => {
+      const tokenizer = tokenize('Hello world. This is mars');
+      expect(tokenizer.join(' ')).toStrictEqual('Hello world This is mars');
+      tokenizer.reset();
+      expect(tokenizer.join()).toStrictEqual('HelloworldThisismars');
+    });
+
+    it('Should expose the input coerced to a string', () => {
+      expect(tokenize('Hello world').input).toStrictEqual('Hello world');
+      expect(tokenize(undefined as unknown as string).input).toStrictEqual('');
+      expect(tokenize(42 as unknown as string).input).toStrictEqual('42');
     });
 
     it('Should return all tokens as string array', () => {

@@ -264,7 +264,9 @@ export function tokenize(input: string, options?: TokenizerOptions): Tokenizer {
       flush(index);
       segStart = index;
       if (bracketStack.length) {
-        throw new SyntaxError(`Bracket (${bracketStack.pop()}) is not closed`);
+        // Name the innermost bracket still open, not its index in `brackets`.
+        const open = bracketsL[bracketStack.pop()!];
+        throw new SyntaxError(`Bracket "${open}" is not closed`);
       }
 
       current = token;
