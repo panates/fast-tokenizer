@@ -1,8 +1,8 @@
 <!-- docs-baseline
-git-commit: b0214ed93afdef45af2373b7e7ce51bb9b1c306d
-package-version: 1.9.0
-date: 2026-09-10
-Verify with: git diff b0214ed93afdef45af2373b7e7ce51bb9b1c306d..HEAD -- src/
+git-commit: 1965f66cc292b39f0ebaecc99952318c3b9555b9
+package-version: 1.10.3
+date: 2026-11-28
+Verify with: git diff 1965f66cc292b39f0ebaecc99952318c3b9555b9..HEAD -- src/
 -->
 
 # fast-tokenizer API Documentation
@@ -50,9 +50,9 @@ All options are optional. Defaults are shown below.
 
 | Option | Type | Default | Description |
 | --- | --- | --- | --- |
-| `delimiters` | `string \| RegExp` | `/\W/` (any non-word character) | Characters that split tokens. A `string` is treated as a set of individual delimiter characters (`delimiters.includes(c)`); a `RegExp` is tested one character at a time (`delimiters.test(c)`). |
+| `delimiters` | `string \| RegExp` | `/\W/` (any non-word character) | Characters that split tokens. A `string` is treated as a set of individual delimiter characters (`delimiters.includes(c)`); a `RegExp` is tested one character at a time (`delimiters.test(c)`). Global (`g`) and sticky (`y`) flags on a `RegExp` are stripped internally, so `lastIndex` state can't skip consecutive delimiters. |
 | `brackets` | `boolean \| Record<string, string>` | `undefined` (disabled) | Enables bracket-aware tokenization. `true` uses the built-in pairs `{ '[': ']', '(': ')' }`; pass an object to define custom (and multi-character) open/close pairs, e.g. `{ '$(': ')$' }`. Content between a matched pair — including nested pairs and delimiter characters — becomes part of a single token. |
-| `quotes` | `boolean \| string[]` | `undefined` (disabled) | Enables quote-aware tokenization. `true` uses the built-in quote characters `['"', "'", '`']`; pass an array to use custom quote strings. Content between a matching pair of quote characters is kept together as one token, including delimiter, bracket, and (by default) escape characters. |
+| `quotes` | `boolean \| string[]` | `undefined` (disabled) | Enables quote-aware tokenization. `true` uses the built-in quote characters `['"', "'", '`']`; pass an array to use custom (and multi-character) quote strings, e.g. `["'''"]`. Content between a matching pair of quote characters is kept together as one token, including delimiter, bracket, and (by default) escape characters. |
 | `escape` | `string \| RegExp \| TokenCallback \| false` | `'\\'` (backslash) | Controls escaping. A `string` or single-char match makes the *next* character literal. A `RegExp` is tested per character. A `TokenCallback` receives `(char, index, input)` and returns whether `char` starts an escape sequence. Pass `false` or `''` to disable escaping entirely. |
 | `keepDelimiters` | `boolean \| TokenCallback` | `undefined` (discarded) | Whether the delimiter character is kept (prepended to the *next* token) instead of discarded. Pass a callback to decide per-delimiter. |
 | `keepQuotes` | `boolean \| TokenCallback` | `undefined` (kept) | Whether the surrounding quote characters are included in the token. Pass a callback to decide per-quote-character. Note: unlike `keepDelimiters`/`keepBrackets`, omitting this option keeps the quotes. |
@@ -242,6 +242,13 @@ tokenize('{ a:1, b: { c: "{a:1}" } }', {
 ```ts
 tokenize('Hello $(world)$', { brackets: { '$(': ')$' } }).all();
 // → ['Hello', '$(world)$']
+```
+
+**Custom, multi-character quotes:**
+
+```ts
+tokenize("a '''b c''' d", { delimiters: ' ', quotes: ["'''"] }).all();
+// → ['a', "'''b c'''", 'd']
 ```
 
 **Disable escaping:**
