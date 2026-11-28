@@ -1,5 +1,31 @@
 # Changelog
-<!-- rman:documented-up-to a278f3600dfd131453ab97828d3c3b5cb1c686a6 -->
+<!-- rman:documented-up-to 1cabe9ea9aaf0408564b7928161dde0566ef2ac4 -->
+
+## v1.10.3 (2026-11-28)
+
+### 🐛 Bug Fixes
+
+- name the unclosed bracket in its error message (f92f4bb)
+
+### 🧪 Tests
+
+- cover the remaining paths of tokenize (b130437)
+
+### 📦 Build System
+
+- upgrade dependencies (e829564)
+
+### 🤖 Continuous Integration
+
+- send coverage to Coveralls from the release (b367c04)
+
+### 🧹 Chores
+
+- set the LICENSE copyright holder to Panates (a29a177)
+- remove .coveralls.yml (81b80c5)
+- keep the session handoff note in .claude/local/ (7a9b115)
+
+---
 
 ## v1.10.2 (2026-11-15)
 
